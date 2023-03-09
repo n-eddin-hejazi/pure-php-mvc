@@ -2,6 +2,7 @@
 
 namespace App\Controllers\Auth;
 use App\Core\Support\QueryBuilder;
+use App\Core\Support\ReCaptcha;
 class RegisterController
 {
      private string $name;
@@ -18,8 +19,8 @@ class RegisterController
      public function store()
      {
           if($_SERVER['REQUEST_METHOD'] === 'POST'){
-               if(isset($_POST['name'], $_POST['email'], $_POST['password'], $_POST['password_confirmation'])){
-
+               if(isset($_POST['name'], $_POST['email'], $_POST['password'], $_POST['password_confirmation'], $_POST['re_captcha'])){
+                    $this->checkReCaptchaV3();
                     // assign preperties
                     $this->name = htmlspecialchars(strip_tags($_POST['name'])) ;
                     $this->email = htmlspecialchars(strip_tags($_POST['email']));
@@ -35,6 +36,14 @@ class RegisterController
                }
           }
 
+     }
+
+     private function checkReCaptchaV3()
+     {
+          if(!ReCaptcha::checkReCaptchaV3($_POST['re_captcha'])){
+               session()->setFlash('fail', "ReCaptcha Error.!");
+               return back();
+          }
      }
 
      private function validation()
