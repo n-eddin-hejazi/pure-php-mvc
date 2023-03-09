@@ -9,6 +9,7 @@ use App\Controllers\Auth\ResetPasswordController;
     <div class="flex flex-col justify-between mt-32">          
         <h2 class="my-6 text-center text-3xl font-extrabold text-gray-700">Reset Your Password</h2>
         <form action="<?= main_url() ?>/reset/password" method="POST" class="w-80 mx-auto flex flex-col justify-between gap-3">
+        <input type="hidden" id="re-captcha" name="re_captcha">
         <input type="hidden" name="email" value="<?= $_GET['email'] ?? false ?>">
         <input type="hidden" name="token" value="<?= $_GET['token'] ?? false ?>">
             <div>
@@ -30,7 +31,7 @@ use App\Controllers\Auth\ResetPasswordController;
             </div>
 
             <div>
-                <button type="submit" class="uppercase tracking-widest group w-full py-2 px-4 border border-transparent text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                <button onclick="formSubmit(event)" class="uppercase tracking-widest group w-full py-2 px-4 border border-transparent text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
                     Reset Password
                 </button>
             </div>
@@ -41,5 +42,16 @@ use App\Controllers\Auth\ResetPasswordController;
 
         </form>
     </div>
-
+<script> 
+    function formSubmit(e) {
+        e.preventDefault();
+        grecaptcha.ready(function() {
+            grecaptcha.execute('<?= env('RECAPTCHA_SITE_KEY'); ?>', {action: 'submit'}).then(function(token) {
+                // Add your logic to submit to your backend server here.
+                document.querySelector('input[name=re_captcha]').value = token;
+                document.querySelector('form').submit();
+            });
+        });
+    }
+</script>
 <?php include view_path() . 'layouts/footer.view.php'; ?>

@@ -1,6 +1,7 @@
 <?php
 namespace App\Controllers\Auth;
 use App\Core\Support\QueryBuilder;
+use App\Core\Support\ReCaptcha;
 use Carbon\Carbon;
 class ResetPasswordController
 {
@@ -93,7 +94,8 @@ class ResetPasswordController
     {
         
         if($_SERVER['REQUEST_METHOD'] === 'POST'){
-            if(isset($_POST['password'], $_POST['password_confirmation'])){
+            if(isset($_POST['password'], $_POST['password_confirmation'], $_POST['re_captcha'])){
+                $this->checkReCaptchaV3();
                 // check url validation
                 self::postURLValidation();
 
@@ -109,6 +111,14 @@ class ResetPasswordController
                 $this->changePassword();
                     
             }
+        }
+    }
+
+    private function checkReCaptchaV3()
+    {   
+        if(!ReCaptcha::checkReCaptchaV3($_POST['re_captcha'])){
+            session()->setFlash('fail', "ReCaptcha Error.!");
+            return back();
         }
     }
 
