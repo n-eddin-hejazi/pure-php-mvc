@@ -2,6 +2,7 @@
 namespace App\Controllers\Auth;
 use Carbon\Carbon;
 use App\Core\Support\Mail;
+use App\Core\Support\ReCaptcha;
 use App\Core\Support\QueryBuilder;
 class ForgetPasswordController
 {
@@ -17,7 +18,8 @@ class ForgetPasswordController
     public function forgetPassword()
     {
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            if (isset($_POST['email'])) {
+            if (isset($_POST['email'], $_POST['re_captcha'])) {
+                $this->checkReCaptchaV3();
                 // assign preperties
                 $this->email = htmlspecialchars(strip_tags($_POST['email']));
 
@@ -28,6 +30,14 @@ class ForgetPasswordController
                 $this->forgetPasswordScenarios();
 
             }
+        }
+    }
+
+    private function checkReCaptchaV3()
+    {   
+        if(!ReCaptcha::checkReCaptchaV3($_POST['re_captcha'])){
+            session()->setFlash('fail', "ReCaptcha Error.!");
+            return back();
         }
     }
 
