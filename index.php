@@ -1,5 +1,6 @@
 <?php
 session_start();
+ob_start();
 use Dotenv\Dotenv;
 use Database\DBConnection;
 use App\Core\Http\Route;
@@ -18,4 +19,4 @@ use Carbon\Carbon;
     require_once 'routes/admin.php';
     (new Route)->resolve();
 
-       
+   ob_end_flush();
