@@ -16,10 +16,13 @@ class LoginController
           return view('auth.login');
      }
 
-      public function store()
+     public function store()
      {    
           if($_SERVER['REQUEST_METHOD'] === 'POST'){
                if(isset($_POST['email'], $_POST['password'], $_POST['re_captcha'])){
+
+                    $this->checkReCaptchaV3();
+
                     // assign preperties
                     $this->email = htmlspecialchars(strip_tags($_POST['email']));
                     $this->password = $_POST['password'];
@@ -38,6 +41,14 @@ class LoginController
                     // redirect to home page
                     $this->redirectToHome();
                }
+          }
+     }
+
+     private function checkReCaptchaV3()
+     {
+          if(!ReCaptcha::checkReCaptchaV3($_POST['re_captcha'])){
+               session()->setFlash('fail', "ReCaptcha Error.!");
+               return back();
           }
      }
 

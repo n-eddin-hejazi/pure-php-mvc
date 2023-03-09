@@ -8,6 +8,9 @@
      <title><?= getTitle() ?></title>
 
      <script src="https://cdn.tailwindcss.com"></script>
+    <?php if (str_contains($_SERVER['REQUEST_URI'], "login")): ?>
+        <script src="https://www.google.com/recaptcha/api.js?render=<?= env('RECAPTCHA_SITE_KEY'); ?>"></script>
+    <?php endif ?>
 
 </head>
 <body>
